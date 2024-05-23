@@ -1,4 +1,3 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import { Flex, Table, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -16,29 +15,10 @@ interface IMatch {
   player4?: string;
 }
 
-interface ITournament {
-  id: number;
-  name: string;
-  league: string;
-  teams: string[];
-  type: string;
-}
-
 export const Matches = () => {
   const [matches, setMatches] = useState([]);
-  const [tournaments, setTournaments] = useState([]);
-  const [tournament, setTournament] = useState("");
-  const [team1, setTeam1] = useState("");
-  const [team2, setTeam2] = useState("");
-  const [player1, setPlayer1] = useState("");
-  const [player2, setPlayer2] = useState("");
-  const [player3, setPlayer3] = useState("");
-  const [player4, setPlayer4] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [action, setAction] = useState("view");
-
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const [, setTournaments] = useState([]);
+  const [action] = useState("view");
 
   const loadMatches = async () => {
     try {

@@ -1,16 +1,11 @@
 import "./App.css";
 import {
-  Button,
   Flex,
   Heading,
-  Input,
   Stack,
   Text,
-  useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useAuth0 } from "@auth0/auth0-react";
-import axios from "axios";
 import { Route, Switch } from "wouter";
 import { Tournaments } from "./pages/tournaments";
 import { Leagues } from "./pages/leagues";
@@ -18,32 +13,6 @@ import Navigation from "./components/sidebar";
 import { Matches } from "./pages/matches";
 
 function App() {
-  const { colorMode, toggleColorMode } = useColorMode();
-  const {
-    loginWithRedirect,
-    logout,
-    user,
-    isAuthenticated,
-    isLoading,
-    getAccessTokenSilently,
-  } = useAuth0();
-
-  const fetchProtectedMessage = async () => {
-    try {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/getProtectedTestMessage`, {
-          headers: {
-            Authorization: `Bearer ${await getAccessTokenSilently()}`,
-          },
-        })
-        .then((response) => {
-          alert(response.data);
-        });
-    } catch (error) {
-      alert(error);
-    }
-  };
-
   return (
     <Flex
       minH="100vh"

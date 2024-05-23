@@ -1,8 +1,8 @@
 import { ChakraBaseProvider } from "@chakra-ui/react";
 import { Auth0Provider } from "@auth0/auth0-react";
+import { ReactNode } from "react";
 
-function Providers(children) {
-  console.log(children);
+function Providers(children: ReactNode) {
   return (
     <Auth0Provider
       domain="dev-xid45skghrg8eqi3.us.auth0.com"
