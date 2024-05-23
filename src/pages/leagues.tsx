@@ -1,19 +1,18 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   Box,
+  Button,
   Flex,
   FormControl,
   FormLabel,
   Heading,
   Input,
-  Stack,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Textarea,
-  Tfoot,
   Th,
   Thead,
   Tr,
@@ -45,21 +44,21 @@ export const Leagues = () => {
     }
   };
 
-  const getUserLeagues = async () => {
-    try {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/leagues/user`, {
-          headers: {
-            Authorization: `Bearer ${await getAccessTokenSilently()}`,
-          },
-        })
-        .then((response) => {
-          setLeagues(response.data);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getUserLeagues = async () => {
+  //   try {
+  //     axios
+  //       .get(`${import.meta.env.VITE_API_URL}/leagues/user`, {
+  //         headers: {
+  //           Authorization: `Bearer ${await getAccessTokenSilently()}`,
+  //         },
+  //       })
+  //       .then((response) => {
+  //         setLeagues(response.data);
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     getLeagues();
@@ -96,29 +95,46 @@ export const Leagues = () => {
       <Heading fontSize={{ base: "md", sm: "lg", md: "xl" }}>Leagues</Heading>
       {action === "view" && (
         <Flex flexDir="column" p={4}>
-          <Heading>Leagues</Heading>
-          <TableContainer>
-            <Table variant="striped" colorScheme="teal" w="100%">
-              <Thead>
-                <Tr>
-                  <Th>League Name</Th>
-                  <Th>Player Count</Th>
-                  {/* <Th>Edit</Th> */}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {leagues.map((league: League) => {
-                  return (
-                    <Tr key={league.id}>
-                      <Td>{league.name}</Td>
-                      <Td>{league.players.length}</Td>
-                      <Td>{/* <button>Edit</button> */}</Td>
-                    </Tr>
-                  );
-                })}
-              </Tbody>
-            </Table>
-          </TableContainer>
+          {leagues.length > 0 && (
+            <TableContainer>
+              <Table variant="striped" colorScheme="teal" w="100%">
+                <Thead>
+                  <Text>Your leagues</Text>
+                  <Tr>
+                    <Th>League Name</Th>
+                    {/* <Th>Player Count</Th> */}
+                    {/* <Th>Edit</Th> */}
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {leagues.map((league: League) => {
+                    return (
+                      <Tr key={league.id}>
+                        <Td>
+                          <Text>{league.name}</Text>
+                        </Td>
+                        <Td>{/* <button>Edit</button> */}</Td>
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          )}
+          {leagues.length === 0 && (
+            <Box>
+              <Text>You haven't created any leagues yet.</Text>
+              <Button
+                bgColor={"purple.700"}
+                p={2}
+                borderRadius={12}
+                m={2}
+                onClick={() => setAction("create")}
+              >
+                Create one now
+              </Button>
+            </Box>
+          )}
         </Flex>
       )}
       {action === "create" && (
