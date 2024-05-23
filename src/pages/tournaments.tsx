@@ -29,6 +29,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, Route, Switch, useParams } from "wouter";
+import "./tournaments.css";
 
 interface League {
   _id: number;
@@ -47,13 +48,17 @@ interface Tournament {
   matches: object[];
 }
 
+interface IMatch {
+  league: number;
+  tournament: number;
+  home_team_name: string;
+  away_team_name: string;
+  round: number;
+}
+
 export const Tournaments = () => {
   const [tournamentListArray, setTournamentListArray] = useState([]);
   const [leagueList, setLeagueList] = useState([]);
-
-  const [tournament, setTournament] = useState<object | Tournament>({
-    matches: [],
-  });
 
   const [name, setName] = useState("");
   const [league, setLeague] = useState("");
@@ -95,25 +100,25 @@ export const Tournaments = () => {
     }
   };
 
-  const loadTournament = async (id: string) => {
-    try {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/tournaments/${id}`, {
-          // headers: {
-          //   Authorization: `Bearer ${await getAccessTokenSilently()}`,
-          // },
-        })
-        .then((response) => {
-          console.log("here", response.data);
-          setTournament(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const loadTournament = async (id: string) => {
+  //   try {
+  //     axios
+  //       .get(`${import.meta.env.VITE_API_URL}/tournaments/${id}`, {
+  //         // headers: {
+  //         //   Authorization: `Bearer ${await getAccessTokenSilently()}`,
+  //         // },
+  //       })
+  //       .then((response) => {
+  //         console.log("here", response.data);
+  //         setTournament(response.data);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   useEffect(() => {
     loadTournaments();
@@ -183,10 +188,10 @@ export const Tournaments = () => {
                 {tournamentListArray.length > 0 ? (
                   tournamentListArray.map((tournament: Tournament) => {
                     return (
-                      <Link to={`/view/${tournament._id}`} asChild>
-                        <Tr key={league.id}>
+                      <Link to={`/view/${tournament.id}`} asChild>
+                        <Tr key={league}>
                           <Td>{tournament.name}</Td>
-                          <Td>{tournament.league.name}</Td>
+                          <Td>{tournament.league}</Td>
                           <Td>{tournament.type}</Td>
                           <Td>{tournament.finished || "false"}</Td>
                         </Tr>
@@ -207,7 +212,7 @@ export const Tournaments = () => {
   const TournamentView = () => {
     const params = useParams();
     const [tournament, setTournament] = useState<Tournament | null>(null); // Initialize state for tournament data
-    const [matches, setMatches] = useState<object[]>([]); // Initialize state for matches data
+    const [matches, setMatches] = useState<Match[]>([]); // Initialize state for matches data
 
     useEffect(() => {
       const fetchTournament = async () => {
@@ -229,7 +234,7 @@ export const Tournaments = () => {
         const fetchMatches = async (tournament: Tournament) => {
           try {
             const response = await axios.get(
-              `${import.meta.env.VITE_API_URL}/matches/tournament/${tournament._id}`
+              `${import.meta.env.VITE_API_URL}/matches/tournament/${tournament.id}`
             );
             setMatches(response.data);
           } catch (error) {
@@ -241,117 +246,44 @@ export const Tournaments = () => {
       }
     }, [tournament]);
 
-    const matchesByNextMatchId = {};
-
-    // Group matches by next match ID
-    matches.forEach((match) => {
-      const nextMatchId = match.nextRoundMatchId;
-      if (nextMatchId) {
-        if (!matchesByNextMatchId[nextMatchId]) {
-          matchesByNextMatchId[nextMatchId] = [match];
-        } else {
-          matchesByNextMatchId[nextMatchId].push(match);
-        }
-      }
-    });
-
-    const drawRound = (nextMatchId) => {
-      const roundMatches = matchesByNextMatchId[nextMatchId];
-      if (!roundMatches) return null;
-
-      return (
-        <HStack key={nextMatchId} spacing={2}>
-          {roundMatches.map((match) => (
-            <VStack key={match._id} alignItems="center" justify={"center"}>
-              <Link to={`/match/view/${match._id}`} asChild>
-                <Box
-                  border="1px solid"
-                  p={4}
-                  borderRadius={4}
-                  w="150px"
-                  h="150px"
-                >
-                  <Text>
-                    {match.team1} vs {match.team2}
-                  </Text>
-                  <Text>
-                    {match.played ? (
-                      <Text fontWeight={600}>
-                        {match.result1} - {match.result2}
-                      </Text>
-                    ) : (
-                      <Text fontWeight={600}>Not played</Text>
-                    )}
-                  </Text>
-                </Box>
-              </Link>
-              {drawRound(match._id)}
-            </VStack>
-          ))}
-        </HStack>
-      );
-    };
-
     return (
-      <div>
-        {/* <h3>Viewing {params.id}</h3> */}
-        {tournament ? (
-          <div>
-            <Heading
-              fontSize={{
-                base: "md",
-                sm: "lg",
-                md: "xl",
-              }}
-            >
-              {tournament.name}
-            </Heading>
-            {/* Render other tournament details here */}
-            {matches.length > 0 ? (
-              <VStack spacing={4} alignItems="flex-start">
-                {matches
-                  .filter((match) => !match.nextRoundMatchId)
-                  .map((match) => (
-                    <Flex
-                      key={match._id}
-                      alignItems="center"
-                      justifyContent={"center"}
-                      flexDir="column"
-                    >
-                      <Link to={`/match/view/${match._id}`} asChild>
-                        <Box
-                          border="1px solid"
-                          p={4}
-                          borderRadius={4}
-                          width="150px"
-                          h="200px"
-                        >
-                          <Text>
-                            {match.team1} vs {match.team2}
-                          </Text>
-                          <Text>
-                            {match.played ? (
-                              <Text fontWeight={600}>
-                                {match.result1} - {match.result2}
-                              </Text>
-                            ) : (
-                              <Text fontWeight={600}>Not played</Text>
-                            )}
-                          </Text>
-                        </Box>
-                      </Link>
-                      {drawRound(match._id)}
-                    </Flex>
-                  ))}
-              </VStack>
-            ) : (
-              <p>No matches created yet</p>
-            )}
-          </div>
-        ) : (
-          <p>Loading tournament data...</p>
-        )}
-      </div>
+      <Flex className="rounds">
+        {Object.keys(matches).map((round, index) => (
+          <Flex className="roundContainer">
+            <Flex className="round">
+              <Text>Round {index + 1}</Text>
+              {matches[round].map((match) => (
+                <Flex className="match">
+                  <Flex
+                    className="team"
+                    bg="gray.400"
+                    _dark={{ bg: "gray.600" }}
+                  >
+                    {match.home_team_name}
+                  </Flex>
+                  <Flex
+                    className="team"
+                    bg="gray.500"
+                    _dark={{ bg: "gray.700" }}
+                  >
+                    {match.away_team_name}
+                  </Flex>
+                </Flex>
+              ))}
+            </Flex>
+          </Flex>
+        ))}
+        <Flex className="roundContainer">
+          <Flex className="round">
+            <Text>Champion</Text>
+            <Flex className="match">
+              <Flex className="team" bg="gray.400" _dark={{ bg: "gray.600" }}>
+                {tournament?.champion || "TBD"}
+              </Flex>
+            </Flex>
+          </Flex>
+        </Flex>
+      </Flex>
     );
   };
 
@@ -360,10 +292,10 @@ export const Tournaments = () => {
     const [match, setMatch] = useState<object | null>(null);
     const [action, setAction] = useState("view");
     const [players, setPlayers] = useState<string[]>([]);
-    const [user1, setUser1] = useState("");
-    const [user2, setUser2] = useState("");
-    const [user3, setUser3] = useState("");
-    const [user4, setUser4] = useState("");
+    const [home_player_1, sethome_player_1] = useState("");
+    const [away_player_1, setaway_player_1] = useState("");
+    const [home_player_2, sethome_player_2] = useState("");
+    const [away_player_2, setaway_player_2] = useState("");
     const [homeScore, setHomeScore] = useState(0);
     const [awayScore, setAwayScore] = useState(0);
 
@@ -402,17 +334,16 @@ export const Tournaments = () => {
       const body = {
         ...match,
         played: true,
-        result1: homeScore,
-        result2: awayScore,
-        user1: user1,
-        user2: user2,
-        user3: user3 ? user3 : null,
-        user4: user4 ? user4 : null,
-        winner: homeScore > awayScore ? match.team1 : match.team2,
+        home_result: homeScore,
+        away_result: awayScore,
+        home_player_1: home_player_1,
+        away_player_1: away_player_1,
+        home_player_2: home_player_2 ? home_player_2 : null,
+        away_player_2: away_player_2 ? away_player_2 : null,
       };
       axios
         .put(
-          `${import.meta.env.VITE_API_URL}/matches/tournament/match/${match._id}`,
+          `${import.meta.env.VITE_API_URL}/matches/tournament/match/${match.id}`,
           body,
           {
             headers: {
@@ -439,25 +370,25 @@ export const Tournaments = () => {
                 md: "xl",
               }}
             >
-              {match.team1} vs {match.team2}
+              {match.home_team_name} vs {match.away_team_name}
               {match.played ? (
                 <Flex flexDir="column">
                   <Text fontWeight={600}>
-                    {match.result1} - {match.result2}
+                    {match.home_result} - {match.away_result}
                   </Text>
                   <Text>
-                    {match.user1} and {match.user3} vs {match.user2} and{" "}
-                    {match.user4}
+                    {match.home_player_1} and {match.home_player_2} vs{" "}
+                    {match.away_player_1} and {match.away_player_2}
                   </Text>
                   <Text>
                     Winners:{" "}
-                    {match.winner === match.team1 ? (
+                    {match.winner === match.home_team_name ? (
                       <Text>
-                        {match.user1} and {match.user3}
+                        {match.home_player_1} and {match.home_player_2}
                       </Text>
                     ) : (
                       <Text>
-                        {match.user2} and {match.user4}
+                        {match.away_player_1} and {match.away_player_2}
                       </Text>
                     )}{" "}
                     {match.winner}
@@ -481,23 +412,23 @@ export const Tournaments = () => {
             >
               <Input
                 type="text"
-                value={match.team1}
+                value={match.home_team_name}
                 onChange={(e) => {
-                  setMatch({ ...match, team1: e.target.value });
+                  setMatch({ ...match, home_team_name: e.target.value });
                 }}
               />{" "}
               vs{" "}
               <Input
                 type="text"
-                value={match.team2}
+                value={match.away_team_name}
                 onChange={(e) => {
-                  setMatch({ ...match, team2: e.target.value });
+                  setMatch({ ...match, away_team_name: e.target.value });
                 }}
               />
             </Text>
             <FormControl>
               <Flex flexDir="column">
-                <FormLabel>Result {match.team1}</FormLabel>
+                <FormLabel>Result {match.home_team_name}</FormLabel>
                 <NumberInput
                   defaultValue={0}
                   min={0}
@@ -512,7 +443,7 @@ export const Tournaments = () => {
                   </NumberInputStepper>
                 </NumberInput>
 
-                <FormLabel>Result {match.team2}</FormLabel>
+                <FormLabel>Result {match.away_team_name}</FormLabel>
                 <NumberInput
                   defaultValue={0}
                   min={0}
@@ -527,11 +458,11 @@ export const Tournaments = () => {
                   </NumberInputStepper>
                 </NumberInput>
 
-                <FormLabel>{match.team1} Players</FormLabel>
+                <FormLabel>{match.home_team_name} Players</FormLabel>
                 <Select
                   placeholder="Select player"
                   onChange={(e) => {
-                    setUser1(e.target.value);
+                    sethome_player_1(e.target.value);
                   }}
                 >
                   {players.map((player) => (
@@ -543,7 +474,7 @@ export const Tournaments = () => {
                 <Select
                   placeholder="Select player"
                   onChange={(e) => {
-                    setUser3(e.target.value);
+                    sethome_player_2(e.target.value);
                   }}
                 >
                   {players.map((player) => (
@@ -553,11 +484,11 @@ export const Tournaments = () => {
                   ))}
                 </Select>
 
-                <FormLabel>{match.team2} Players</FormLabel>
+                <FormLabel>{match.away_team_name} Players</FormLabel>
                 <Select
                   placeholder="Select player"
                   onChange={(e) => {
-                    setUser2(e.target.value);
+                    setaway_player_1(e.target.value);
                   }}
                 >
                   {players.map((player) => (
@@ -569,7 +500,7 @@ export const Tournaments = () => {
                 <Select
                   placeholder="Select player"
                   onChange={(e) => {
-                    setUser4(e.target.value);
+                    setaway_player_2(e.target.value);
                   }}
                 >
                   {players.map((player) => (
@@ -662,7 +593,7 @@ export const Tournaments = () => {
                 }}
               >
                 {leagueList.map((league: League) => (
-                  <option key={league._id} value={league._id}>
+                  <option key={league.id} value={league.name}>
                     {league.name}
                   </option>
                 ))}
