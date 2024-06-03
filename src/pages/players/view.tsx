@@ -6,7 +6,7 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "wouter";
 
@@ -18,7 +18,6 @@ export const PlayerView = () => {
     const { data } = await axios.get(
       `${import.meta.env.VITE_API_URL}/players/${id}`
     );
-    console.log(data[0]);
     return data[0];
   };
 
