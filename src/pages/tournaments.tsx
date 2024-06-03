@@ -30,6 +30,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, Route, Switch, useParams } from "wouter";
 import "./tournaments.css";
+import { SyncLoader } from "react-spinners";
 
 interface League {
   _id: number;
@@ -60,16 +61,20 @@ export const Tournaments = () => {
   const [tournamentListArray, setTournamentListArray] = useState([]);
   const [leagueList, setLeagueList] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [name, setName] = useState("");
   const [league, setLeague] = useState("");
   const [teams, setTeams] = useState("");
   const [type, setType] = useState("knockout");
   const [action, setAction] = useState("view");
 
+  const color = useColorModeValue("black", "white");
+
   const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
   const loadTournaments = async () => {
     try {
+      setIsLoading(true);
       axios
         .get(`${import.meta.env.VITE_API_URL}/tournaments`, {
           // headers: {
@@ -78,14 +83,17 @@ export const Tournaments = () => {
         })
         .then((response) => {
           setTournamentListArray(response.data);
+          setIsLoading(false);
         });
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
   const loadLeagues = async () => {
     try {
+      setIsLoading(true);
       axios
         .get(`${import.meta.env.VITE_API_URL}/leagues/user`, {
           headers: {
@@ -94,9 +102,11 @@ export const Tournaments = () => {
         })
         .then((response) => {
           setLeagueList(response.data);
+          setIsLoading(false);
         });
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -162,7 +172,12 @@ export const Tournaments = () => {
     return (
       <Flex justify={"center"} w="100%">
         <Flex flexDir="column" w="100%">
-          {isAuthenticated && (
+          {isLoading && (
+            <Box alignSelf={"center"} margin="1em">
+              <SyncLoader color={color} />
+            </Box>
+          )}
+          {!isLoading && isAuthenticated && (
             <Button
               onClick={() => setAction("create")}
               p={2}
@@ -174,36 +189,38 @@ export const Tournaments = () => {
               Create new tournament
             </Button>
           )}
-          <TableContainer>
-            <Table variant="striped" w="100%">
-              <Thead>
-                <Tr>
-                  <Th>Name</Th>
-                  <Th>League</Th>
-                  <Th>Type</Th>
-                  <Th>Finished</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {tournamentListArray.length > 0 ? (
-                  tournamentListArray.map((tournament: Tournament) => {
-                    return (
-                      <Link to={`/view/${tournament.id}`} asChild>
-                        <Tr key={league}>
-                          <Td>{tournament.name}</Td>
-                          <Td>{tournament.league}</Td>
-                          <Td>{tournament.type}</Td>
-                          <Td>{tournament.finished || "false"}</Td>
-                        </Tr>
-                      </Link>
-                    );
-                  })
-                ) : (
-                  <p>No tournaments created yet</p>
-                )}
-              </Tbody>
-            </Table>
-          </TableContainer>
+          {!isLoading && (
+            <TableContainer>
+              <Table variant="striped" w="100%">
+                <Thead>
+                  <Tr>
+                    <Th>Name</Th>
+                    <Th>League</Th>
+                    <Th>Type</Th>
+                    <Th>Finished</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {!isLoading && tournamentListArray.length > 0 ? (
+                    tournamentListArray.map((tournament: Tournament) => {
+                      return (
+                        <Link to={`/view/${tournament.id}`} asChild>
+                          <Tr key={league}>
+                            <Td>{tournament.name}</Td>
+                            <Td>{tournament.league}</Td>
+                            <Td>{tournament.type}</Td>
+                            <Td>{tournament.finished || "false"}</Td>
+                          </Tr>
+                        </Link>
+                      );
+                    })
+                  ) : (
+                    <p>No tournaments created yet</p>
+                  )}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          )}
         </Flex>
       </Flex>
     );
@@ -521,7 +538,7 @@ export const Tournaments = () => {
 
   return (
     <div>
-      <h1>Tournaments</h1>
+      <Heading>Tournaments</Heading>
       <Switch>
         <Route path="/match/view/:id" component={MatchView} />
         <Route path="/view/:id" component={TournamentView} />

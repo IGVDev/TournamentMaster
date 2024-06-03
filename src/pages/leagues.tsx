@@ -7,6 +7,9 @@ import {
   FormLabel,
   Heading,
   Input,
+  Progress,
+  Spinner,
+  Stack,
   Table,
   TableContainer,
   Tbody,
@@ -16,9 +19,11 @@ import {
   Th,
   Thead,
   Tr,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { ClipLoader, PacmanLoader, SyncLoader } from "react-spinners";
 
 interface League {
   id: number;
@@ -27,20 +32,26 @@ interface League {
 }
 
 export const Leagues = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [name, setName] = useState("");
   const [players, setPlayers] = useState("");
   const [action, setAction] = useState("view");
   const [leagues, setLeagues] = useState([]);
 
+  const color = useColorModeValue("black", "white");
+
   const getLeagues = async () => {
     try {
+      setIsLoading(true);
       axios
         .get(`${import.meta.env.VITE_API_URL}/leagues`, {})
         .then((response) => {
           setLeagues(response.data);
+          setIsLoading(false);
         });
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   };
 
@@ -94,8 +105,9 @@ export const Leagues = () => {
     <Flex flexDir="column" w="100%">
       <Heading fontSize={{ base: "md", sm: "lg", md: "xl" }}>Leagues</Heading>
       {action === "view" && (
-        <Flex flexDir="column" p={4}>
-          {leagues.length > 0 && (
+        <Flex flexDir="column" p={4} alignItems={"center"}>
+          {isLoading && <SyncLoader color={color} />}
+          {!isLoading && leagues.length > 0 && (
             <TableContainer>
               <Table variant="striped" colorScheme="teal" w="100%">
                 <Thead>
@@ -121,7 +133,7 @@ export const Leagues = () => {
               </Table>
             </TableContainer>
           )}
-          {leagues.length === 0 && (
+          {!isLoading && leagues.length === 0 && (
             <Box>
               <Text>You haven't created any leagues yet.</Text>
               <Button
