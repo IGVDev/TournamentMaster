@@ -102,20 +102,25 @@ export const Leagues = () => {
   };
 
   return (
-    <Flex flexDir="column" w="100%">
+    <Flex flexDir="column" w="100%" align="center">
       <Heading fontSize={{ base: "md", sm: "lg", md: "xl" }}>Leagues</Heading>
       {action === "view" && (
         <Flex flexDir="column" p={4} alignItems={"center"}>
+          <Button
+            bgColor={"purple.700"}
+            borderRadius={12}
+            onClick={() => setAction("create")}
+          >
+            Create new league
+          </Button>
           {isLoading && <SyncLoader color={color} />}
           {!isLoading && leagues.length > 0 && (
             <TableContainer>
-              <Table variant="striped" colorScheme="teal" w="100%">
+              <Table variant="striped" colorScheme="purple" w="100%">
                 <Thead>
-                  <Text>Your leagues</Text>
                   <Tr>
                     <Th>League Name</Th>
-                    {/* <Th>Player Count</Th> */}
-                    {/* <Th>Edit</Th> */}
+                    <Th>Edit</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -125,7 +130,9 @@ export const Leagues = () => {
                         <Td>
                           <Text>{league.name}</Text>
                         </Td>
-                        <Td>{/* <button>Edit</button> */}</Td>
+                        <Td>
+                          <button>Edit</button>
+                        </Td>
                       </Tr>
                     );
                   })}
@@ -136,21 +143,12 @@ export const Leagues = () => {
           {!isLoading && leagues.length === 0 && (
             <Box>
               <Text>You haven't created any leagues yet.</Text>
-              <Button
-                bgColor={"purple.700"}
-                p={2}
-                borderRadius={12}
-                m={2}
-                onClick={() => setAction("create")}
-              >
-                Create one now
-              </Button>
             </Box>
           )}
         </Flex>
       )}
       {action === "create" && (
-        <Flex flexDir="column">
+        <Flex flexDir="column" justifyContent="center" w="50%">
           <Box>Create League</Box>
           <FormControl>
             <Flex flexDir="column">
@@ -166,10 +164,11 @@ export const Leagues = () => {
                 onChange={(e) => setPlayers(e.target.value)}
               />
 
-              <Flex>
-                <button onClick={handleSubmit}>Create</button>
-
-                <button>Cancel</button>
+              <Flex mt={4} gap={4}>
+                <Button w="50%">Cancel</Button>
+                <Button w="50%" onClick={handleSubmit} bgColor={"purple.700"}>
+                  Create
+                </Button>
               </Flex>
             </Flex>
           </FormControl>
