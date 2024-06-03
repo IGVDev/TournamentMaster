@@ -6,6 +6,9 @@ import "./index.css";
 import { ChakraBaseProvider } from "@chakra-ui/react";
 import { Auth0Provider } from "@auth0/auth0-react";
 import { theme } from "./theme/index.ts";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -18,9 +21,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         audience: "http://tournamentmaster.com",
       }}
     >
-      <ChakraBaseProvider theme={theme}>
-        <App />
-      </ChakraBaseProvider>
+      <QueryClientProvider client={queryClient}>
+        <ChakraBaseProvider theme={theme}>
+          <App />
+        </ChakraBaseProvider>
+      </QueryClientProvider>
     </Auth0Provider>
     {/* </Providers> */}
   </React.StrictMode>

@@ -11,6 +11,8 @@ import { Tournaments } from "./pages/tournaments";
 import { Leagues } from "./pages/leagues";
 import Navigation from "./components/sidebar";
 import { Matches } from "./pages/matches";
+import { PlayerList } from "./pages/players/list";
+import { PlayerView } from "./pages/players/view";
 
 function App() {
   return (
@@ -21,16 +23,19 @@ function App() {
       bg={useColorModeValue("gray.100", "gray.900")}
     >
       <Navigation />
-      <Flex flexDir="column" alignItems={"center"} w="100%" p={8}>
-        <Heading fontSize={{ base: "md", sm: "lg", md: "xl" }}>
-          Tournament Master
-        </Heading>
+      <Flex flexDir="column" alignItems="center" w="100%" p={8}>
         <Switch>
           <Route path="/tournaments" component={Tournaments} nest />
           <Route path="/leagues" component={Leagues} />
           <Route path="/matches" component={Matches} />
+          <Route path="/players" nest>
+            <Route path="/view" nest>
+              <Route path="/" component={PlayerList} />
+              <Route path="/:id" component={PlayerView} />
+            </Route>
+          </Route>
           <Route path="/">
-            <Stack spacing="4" alignItems="center">
+            <Stack spacing="4" alignItems="center" w="100%">
               <Heading
                 fontWeight={600}
                 fontSize={{ base: "3xl", sm: "4xl", md: "6xl" }}

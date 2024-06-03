@@ -23,6 +23,9 @@ import {
   FiSettings,
   FiMenu,
 } from "react-icons/fi";
+import { FaFolder } from "react-icons/fa";
+import { GiSoccerKick } from "react-icons/gi";
+import { TbTournament } from "react-icons/tb";
 import { IconType } from "react-icons";
 import { ReactText } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -35,8 +38,9 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: "Home", icon: FiHome, href: "/" },
-  { name: "Leagues", icon: FiTrendingUp, href: "/leagues" },
-  { name: "Tournaments", icon: FiCompass, href: "/tournaments" },
+  { name: "Leagues", icon: FaFolder, href: "/leagues" },
+  { name: "Tournaments", icon: TbTournament, href: "/tournaments" },
+  { name: "Players", icon: GiSoccerKick, href: "/players/view" },
   //   { name: "Matches", icon: FiStar, href: "/matches" },
 ];
 
