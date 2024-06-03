@@ -9,31 +9,29 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 
 export const PlayerList = () => {
-  const [playerList, setPlayerList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(1);
-
   const getPlayerList = async () => {
-    try {
-      setIsLoading(true);
-      axios.get(`${import.meta.env.VITE_API_URL}/players`).then((response) => {
-        setPlayerList(response.data);
-        setIsLoading(false);
-      });
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/players`);
+    return data;
   };
 
-  useEffect(() => {
-    getPlayerList();
-  }, [page]);
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ["playerList"],
+    queryFn: () => getPlayerList(),
+  });
+
+  if (isPending) {
+    return <>Loading...</>;
+  }
+
+  if (isError) {
+    return <>Something has gone wrong. {error.message}</>;
+  }
 
   return (
     <div>
@@ -48,7 +46,7 @@ export const PlayerList = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {playerList.map((player) => (
+            {data.map((player) => (
               <Tr>
                 <Td>{player.name}</Td>
                 <Td>{player.league}</Td>

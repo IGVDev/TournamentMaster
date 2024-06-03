@@ -7,12 +7,15 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { Route, Switch } from "wouter";
-import { Tournaments } from "./pages/tournaments";
+import { Tournaments } from "./pages/tournaments/main";
 import { Leagues } from "./pages/leagues";
 import Navigation from "./components/sidebar";
-import { Matches } from "./pages/matches";
+import { Matches } from "./pages/matches/matches";
 import { PlayerList } from "./pages/players/list";
 import { PlayerView } from "./pages/players/view";
+import { TournamentView } from "./pages/tournaments/view";
+import { TournamentList } from "./pages/tournaments/list";
+import { MatchView } from "./pages/matches/edit";
 
 function App() {
   return (
@@ -25,7 +28,12 @@ function App() {
       <Navigation />
       <Flex flexDir="column" alignItems="center" w="100%" p={8}>
         <Switch>
-          <Route path="/tournaments" component={Tournaments} nest />
+          <Route path="/tournaments" nest>
+            <Heading>Tournaments</Heading>
+            <Route path="/" component={TournamentList} />
+            <Route path="/view/:id" component={TournamentView} />
+            <Route path="/view/match/:id" component={MatchView} />
+          </Route>
           <Route path="/leagues" component={Leagues} />
           <Route path="/matches" component={Matches} />
           <Route path="/players" nest>
