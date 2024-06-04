@@ -61,6 +61,7 @@ export const MatchView = () => {
   } = useQuery({
     queryKey: ["match", matchId],
     queryFn: () => getMatch(Number(matchId)),
+    staleTime: Infinity,
   });
 
   const queryEnabled = matchData?.league;
@@ -87,6 +88,7 @@ export const MatchView = () => {
       home_player_2: home_player_2 ? home_player_2 : null,
       away_player_2: away_player_2 ? away_player_2 : null,
     };
+    console.log(body);
     axios.put(
       `${import.meta.env.VITE_API_URL}/matches/tournament/match/${matchData.id}`,
       body,
@@ -175,7 +177,7 @@ export const MatchView = () => {
           </Text>
           <FormControl>
             <Flex flexDir="column">
-              <FormLabel>Result {matchData.home_team_name}</FormLabel>
+              <FormLabel>Result {match.home_team_name}</FormLabel>
               <NumberInput
                 defaultValue={0}
                 min={0}
@@ -188,7 +190,7 @@ export const MatchView = () => {
                 </NumberInputStepper>
               </NumberInput>
 
-              <FormLabel>Result {matchData.away_team_name}</FormLabel>
+              <FormLabel>Result {match.away_team_name}</FormLabel>
               <NumberInput
                 defaultValue={0}
                 min={0}
@@ -201,7 +203,7 @@ export const MatchView = () => {
                 </NumberInputStepper>
               </NumberInput>
 
-              <FormLabel>{matchData.home_team_name} Players</FormLabel>
+              <FormLabel>{match.home_team_name} Players</FormLabel>
               <Select
                 placeholder="Select player"
                 onChange={(e) => {
@@ -209,7 +211,7 @@ export const MatchView = () => {
                 }}
               >
                 {playerListData.map((player) => (
-                  <option key={player.id} value={player.name}>
+                  <option key={player.id} value={player.id}>
                     {player.name}
                   </option>
                 ))}
@@ -221,13 +223,13 @@ export const MatchView = () => {
                 }}
               >
                 {playerListData.map((player) => (
-                  <option key={player.id} value={player.name}>
+                  <option key={player.id} value={player.id}>
                     {player.name}
                   </option>
                 ))}
               </Select>
 
-              <FormLabel>{matchData.away_team_name} Players</FormLabel>
+              <FormLabel>{match.away_team_name} Players</FormLabel>
               <Select
                 placeholder="Select player"
                 onChange={(e) => {
@@ -235,7 +237,7 @@ export const MatchView = () => {
                 }}
               >
                 {playerListData.map((player) => (
-                  <option key={player} value={player}>
+                  <option key={player.id} value={player.id}>
                     {player.name}
                   </option>
                 ))}
@@ -247,7 +249,7 @@ export const MatchView = () => {
                 }}
               >
                 {playerListData.map((player) => (
-                  <option key={player} value={player}>
+                  <option key={player.id} value={player.id}>
                     {player.name}
                   </option>
                 ))}
