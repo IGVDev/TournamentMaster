@@ -13,7 +13,7 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { useParams } from "wouter";
@@ -58,13 +58,12 @@ export const MatchView = () => {
     isPending: isMatchPending,
     isError: isMatchError,
     error: matchError,
+    refetch: refetchMatch,
   } = useQuery({
     queryKey: ["match", matchId],
     queryFn: () => getMatch(Number(matchId)),
     staleTime: Infinity,
   });
-
-  const queryEnabled = matchData?.league;
 
   const {
     data: playerListData,
@@ -88,17 +87,30 @@ export const MatchView = () => {
       home_player_2: home_player_2 ? home_player_2 : null,
       away_player_2: away_player_2 ? away_player_2 : null,
     };
-    console.log(body);
-    axios.put(
-      `${import.meta.env.VITE_API_URL}/matches/tournament/match/${matchData.id}`,
-      body,
-      {
-        headers: {
-          Authorization: `Bearer ${await getAccessTokenSilently()}`,
-        },
-      }
-    );
+    mutateMatch.mutate(body);
   };
+
+  const mutateMatch = useMutation({
+    mutationFn: async (editedMatch) => {
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_API_URL}/matches/tournament/match/${matchData.id}`,
+        editedMatch,
+        {
+          headers: {
+            Authorization: `Bearer ${await getAccessTokenSilently()}`,
+          },
+        }
+      );
+      return data;
+    },
+    onSuccess: () => {
+      setAction("view");
+      refetchMatch();
+    },
+    onError: () => {
+      console.log("Oops.");
+    },
+  });
 
   if (isPlayerListPending || isMatchPending) {
     return <>Loading...</>;
