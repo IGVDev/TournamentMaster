@@ -38,17 +38,45 @@ export const TournamentView = () => {
                 <Flex className="match">
                   <Flex
                     className="team"
-                    bg="gray.400"
-                    _dark={{ bg: "gray.600" }}
+                    justify="space-between"
+                    gap={8}
+                    fontWeight={
+                      match.winner === match.home_team_name ? "bold" : "normal"
+                    }
+                    bg={
+                      data[data.length - 1][0].winner === match.home_team_name
+                        ? "green.500"
+                        : "gray.400"
+                    }
+                    _dark={
+                      data[data.length - 1][0].winner === match.home_team_name
+                        ? { bg: "green.500" }
+                        : { bg: "gray.600" }
+                    }
                   >
-                    {match.home_team_name}
+                    <Text>{match.home_team_name}</Text>
+                    <Text>{match.home_result}</Text>
                   </Flex>
                   <Flex
                     className="team"
-                    bg="gray.500"
-                    _dark={{ bg: "gray.700" }}
+                    justify="space-between"
+                    gap={8}
+                    fontWeight={
+                      match.winner === match.away_team_name ? "bold" : "normal"
+                    }
+                    bg={
+                      data[data.length - 1][0].winner === match.away_team_name
+                        ? "green.500"
+                        : "gray.500"
+                    }
+                    _dark={
+                      data[data.length - 1][0].winner === match.away_team_name
+                        ? { bg: "green.500" }
+                        : { bg: "gray.700" }
+                    }
                   >
-                    {match.away_team_name}
+                    <Text>{match.away_team_name}</Text>
+                    <Text>{match.away_result}</Text>
                   </Flex>
                 </Flex>
               </Link>
@@ -60,7 +88,16 @@ export const TournamentView = () => {
         <Flex className="round">
           <Text>Champion</Text>
           <Flex className="match">
-            <Flex className="team" bg="gray.400" _dark={{ bg: "gray.600" }}>
+            <Flex
+              className="team"
+              bg={data[data.length - 1][0].winner ? "green.500" : "gray.400"}
+              fontWeight={data[data.length - 1][0].winner ? "bold" : "normal"}
+              _dark={
+                data[data.length - 1][0].winner
+                  ? { bg: "green.500" }
+                  : { bg: "gray.400" }
+              }
+            >
               {data[data.length - 1][0].winner || "TBD"}
             </Flex>
           </Flex>
