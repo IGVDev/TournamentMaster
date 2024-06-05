@@ -11,7 +11,6 @@ export const TournamentView = () => {
     const { data } = await axios.get(
       `${import.meta.env.VITE_API_URL}/matches/tournament/${id}`
     );
-    console.log(data);
     return data;
   };
 
@@ -30,7 +29,7 @@ export const TournamentView = () => {
 
   return (
     <Flex className="rounds">
-      {data.map((round, index) => (
+      {data.map((round, index: number) => (
         <Flex className="roundContainer">
           <Flex className="round">
             <Text>Round {index + 1}</Text>
