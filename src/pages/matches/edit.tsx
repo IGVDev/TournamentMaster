@@ -191,7 +191,7 @@ export const MatchView = () => {
             <Flex flexDir="column">
               <FormLabel>Result {match.home_team_name}</FormLabel>
               <NumberInput
-                defaultValue={0}
+                defaultValue={match.home_result}
                 min={0}
                 onChange={(valueString) => setHomeScore(parseInt(valueString))}
               >
@@ -204,7 +204,7 @@ export const MatchView = () => {
 
               <FormLabel>Result {match.away_team_name}</FormLabel>
               <NumberInput
-                defaultValue={0}
+                defaultValue={match.away_result}
                 min={0}
                 onChange={(valueString) => setAwayScore(parseInt(valueString))}
               >
@@ -218,6 +218,7 @@ export const MatchView = () => {
               <FormLabel>{match.home_team_name} Players</FormLabel>
               <Select
                 placeholder="Select player"
+                defaultValue={match.home_player_1}
                 onChange={(e) => {
                   sethome_player_1(e.target.value);
                 }}
@@ -230,6 +231,7 @@ export const MatchView = () => {
               </Select>
               <Select
                 placeholder="Select player"
+                defaultValue={match.home_player_2}
                 onChange={(e) => {
                   sethome_player_2(e.target.value);
                 }}
@@ -244,6 +246,7 @@ export const MatchView = () => {
               <FormLabel>{match.away_team_name} Players</FormLabel>
               <Select
                 placeholder="Select player"
+                defaultValue={match.away_player_1}
                 onChange={(e) => {
                   setaway_player_1(e.target.value);
                 }}
@@ -256,6 +259,7 @@ export const MatchView = () => {
               </Select>
               <Select
                 placeholder="Select player"
+                defaultValue={match.away_player_2}
                 onChange={(e) => {
                   setaway_player_2(e.target.value);
                 }}
