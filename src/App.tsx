@@ -29,7 +29,6 @@ function App() {
       <Flex flexDir="column" alignItems="center" w="100%" p={8}>
         <Switch>
           <Route path="/tournaments" nest>
-            <Heading>Tournaments</Heading>
             <Route path="/" component={TournamentList} />
             <Route path="/view/:id" component={TournamentView} />
             <Route path="/view/match/:id" component={MatchView} />
