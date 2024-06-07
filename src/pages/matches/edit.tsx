@@ -1,10 +1,15 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   Button,
+  Center,
+  Divider,
   Flex,
   FormControl,
   FormLabel,
+  Heading,
   Input,
+  List,
+  ListItem,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -16,7 +21,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
-import { useParams } from "wouter";
+import { Link, useParams } from "wouter";
 
 export const MatchView = () => {
   const params = useParams();
@@ -123,42 +128,53 @@ export const MatchView = () => {
   return (
     <div>
       {matchData && action === "view" && (
-        <Flex flexDir="column" p={4}>
-          <Text
-            fontSize={{
-              base: "md",
-              sm: "lg",
-              md: "xl",
-            }}
-          >
-            {matchData.home_team_name} vs {matchData.away_team_name}
-            {matchData.played ? (
-              <Flex flexDir="column">
-                <Text fontWeight={600}>
-                  {matchData.home_result} - {matchData.away_result}
-                </Text>
-                <Text>
-                  {matchData.home_player_1} and {matchData.home_player_2} vs{" "}
-                  {matchData.away_player_1} and {matchData.away_player_2}
-                </Text>
-                <Text>
-                  Winners:{" "}
-                  {matchData.winner === matchData.home_team_name ? (
-                    <Text>
-                      {matchData.home_player_1} and {matchData.home_player_2}
-                    </Text>
-                  ) : (
-                    <Text>
-                      {matchData.away_player_1} and {matchData.away_player_2}
-                    </Text>
-                  )}{" "}
-                  {matchData.winner}
-                </Text>
+        <Flex flexDir="column" p={4} gap={4}>
+          <Heading>
+            {matchData.home_team_name} {matchData.home_result || ""} -{" "}
+            {matchData.away_result || ""} {matchData.away_team_name}
+          </Heading>
+          {matchData.played ? (
+            <Flex flexDir="column" className={"statsContainer"} gap={4}>
+              <Heading size="md">Players</Heading>
+              <Flex
+                className="playersContainer"
+                fontSize={"xl"}
+                fontWeight="bold"
+                w="100%"
+              >
+                <Flex flexDir="column" w="50%" borderRight="1px">
+                  <List>
+                    <ListItem>
+                      <Link to={`~/players/view/${matchData.home_player_1}`}>
+                        {matchData.home_player_1}
+                      </Link>
+                    </ListItem>
+                    <ListItem>
+                      <Link to={`~/players/view/${matchData.home_player_2}`}>
+                        {matchData.home_player_2}
+                      </Link>
+                    </ListItem>
+                  </List>
+                </Flex>
+                <Flex flexDir="column" w="50%">
+                  <List>
+                    <ListItem>
+                      <Link to={`~/players/view/${matchData.away_player_1}`}>
+                        {matchData.away_player_1}
+                      </Link>
+                    </ListItem>
+                    <ListItem>
+                      <Link to={`~/players/view/${matchData.away_player_2}`}>
+                        {matchData.away_player_2}
+                      </Link>
+                    </ListItem>
+                  </List>
+                </Flex>
               </Flex>
-            ) : (
-              <Text fontWeight={600}>Not played</Text>
-            )}
-          </Text>
+            </Flex>
+          ) : (
+            <Text fontWeight={600}>Not played</Text>
+          )}
           <Button onClick={() => setAction("edit")}>Edit</Button>
         </Flex>
       )}
