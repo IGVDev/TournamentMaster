@@ -16,6 +16,7 @@ import { PlayerView } from "./pages/players/view";
 import { TournamentView } from "./pages/tournaments/view";
 import { TournamentList } from "./pages/tournaments/list";
 import { MatchView } from "./pages/matches/edit";
+import { CreateTournament } from "./pages/tournaments/create";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/" component={TournamentList} />
             <Route path="/view/:id" component={TournamentView} />
             <Route path="/view/match/:id" component={MatchView} />
+            <Route path="/create" component={CreateTournament} />
           </Route>
           <Route path="/leagues" component={Leagues} />
           <Route path="/matches" component={Matches} />

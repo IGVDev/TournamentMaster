@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "wouter";
 import "./styles.css";
+import { navigate } from "wouter/use-browser-location";
 
 export const TournamentList = () => {
   const colors = useColorModeValue("gray.200", "gray.700");
@@ -46,6 +47,7 @@ export const TournamentList = () => {
         bgColor={colors}
         alignContent={"center"}
         justifyContent={"center"}
+        onClick={() => navigate("/tournaments/create")}
       >
         Create new tournament
       </Button>
